@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func GetUrl(w http.ResponseWriter, r *http.Request) {
+func GetUrlHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "not GET", http.StatusBadRequest)
 		return

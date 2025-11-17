@@ -2,6 +2,7 @@ package app
 
 import (
 	"net/http"
+	"shortener/internal/middleware"
 	"shortener/internal/router"
 )
 
@@ -13,7 +14,7 @@ func NewApp() *App {
 	return &App{
 		Server: http.Server{
 			Addr:    ":8080",
-			Handler: router.Router(),
+			Handler: middleware.LoggerMiddleware(router.SetupRouter()),
 		},
 	}
 }

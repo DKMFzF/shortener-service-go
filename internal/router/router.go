@@ -10,6 +10,7 @@ func Router() *http.ServeMux {
 
 	mux.Handle(`GET /ping`, http.HandlerFunc(handler.PongHandler))
 	mux.Handle(`/`, http.HandlerFunc(handler.ShortHandler))
+	mux.Handle(`GET /{id}`, http.HandlerFunc(handler.GetUrl))
 
 	return mux
 }

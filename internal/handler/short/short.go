@@ -15,8 +15,8 @@ func ShortHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contentType := r.Header.Get("Content-Type")
-	if !strings.Contains(contentType, "text/plain") {
-		http.Error(w, "Content-Type must be text/plain", http.StatusUnsupportedMediaType)
+	if !strings.Contains(contentType, "text/plain; charset=utf-8") {
+		http.Error(w, "Content-Type must be text/plain; charset=utf-8", http.StatusUnsupportedMediaType)
 		return
 	}
 
@@ -40,7 +40,7 @@ func ShortHandler(w http.ResponseWriter, r *http.Request) {
 	shortCode := service.ResizeUrl(originUrl)
 	resStr := "http://localhost:8080/" + shortCode
 
-	w.Header().Set("Content-type", "text/plain")
+	w.Header().Set("Content-type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(resStr))
 }

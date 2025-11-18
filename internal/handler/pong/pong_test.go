@@ -42,7 +42,7 @@ func TestPongHandler(t *testing.T) {
 			}
 
 			require.Equal(t, tt.Want.Response, string(resBody))
-			assert.Equal(t, res.Header.Get("Content-Type"), tt.Want.ContentType)
+			assert.Equal(t, tt.Want.ContentType, res.Header.Get("Content-Type"))
 		})
 	}
 }

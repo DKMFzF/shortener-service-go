@@ -1,4 +1,4 @@
-package handler
+package getUrl
 
 import (
 	"net/http"
@@ -12,8 +12,8 @@ func GetUrlHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contentType := r.Header.Get("Content-Type")
-	if !strings.Contains(contentType, "text/plain") {
-		http.Error(w, "Content-Type not text/plain", http.StatusBadRequest)
+	if !strings.Contains(contentType, "text/plain; charset=utf-8") {
+		http.Error(w, "Content-Type not text/plain; charset=utf-8", http.StatusBadRequest)
 		return
 	}
 
@@ -25,7 +25,7 @@ func GetUrlHandler(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: write service logic for get url
 
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("https://practicum.yandex.ru/"))
 }

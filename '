@@ -9,11 +9,7 @@ test-all:
 	@echo "[ Final ]"
 
 test-all-cache:
-	@echo "[ Testing + cache... ]"
 	@go test ./...
-	@echo "[ Final ]"
 
-test-all-full-info:
-	@echo "[ Testing full info... ]"
+test-full-info:
 	@go test -v ./...
-	@echo "[ Final ]"

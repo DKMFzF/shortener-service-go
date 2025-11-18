@@ -1,4 +1,4 @@
-package handler
+package getUrl
 
 import (
 	"net/http"

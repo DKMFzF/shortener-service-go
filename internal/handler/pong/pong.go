@@ -1,4 +1,4 @@
-package handler
+package pong
 
 import "net/http"
 

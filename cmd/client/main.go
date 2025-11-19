@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"net/url"
 	"os"
 	"strings"
 
@@ -24,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	longUrl = strings.TrimSuffix(longUrl)
+	longUrl = strings.TrimSuffix(longUrl, "\n")
 
 	client := resty.New()
 

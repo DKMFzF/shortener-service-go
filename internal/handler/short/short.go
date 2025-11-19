@@ -4,7 +4,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"shortener/internal/service"
+	"shortener/internal/service/resizeUrl"
+
 	"strings"
 )
 
@@ -37,7 +38,7 @@ func ShortHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	shortCode := service.ResizeUrl(originUrl)
+	shortCode := resizeUrl.ResizeUrl(originUrl)
 	resStr := "http://localhost:8080/" + shortCode
 
 	w.Header().Set("Content-type", "text/plain; charset=utf-8")

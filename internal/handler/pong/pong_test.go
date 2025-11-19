@@ -3,11 +3,11 @@ package pong
 import (
 	"shortener/test"
 
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -26,23 +26,20 @@ func TestPongHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			request := httptest.NewRequest(http.MethodGet, "/ping", nil)
-			w := httptest.NewRecorder()
-			PongHandler(w, request)
+			ts := httptest.NewServer(http.HandlerFunc(PongHandler))
+			defer ts.Close()
 
-			res := w.Result()
+			client := resty.New()
+			client.SetBaseURL(ts.URL)
 
-			assert.Equal(t, tt.Want.Code, res.StatusCode)
-			defer res.Body.Close()
-
-			resBody, err := io.ReadAll(res.Body)
+			resp, err := client.R().Get("/ping")
 			if err != nil {
-				t.Fatalf("Error in io.read for body: %v", err)
-				return
+				panic(err)
 			}
 
-			require.Equal(t, tt.Want.Response, string(resBody))
-			assert.Equal(t, tt.Want.ContentType, res.Header.Get("Content-Type"))
+			assert.Equal(t, tt.Want.Code, resp.StatusCode())
+			require.Equal(t, tt.Want.Response, string(resp.Body()))
+			assert.Equal(t, tt.Want.ContentType, resp.Header().Get("Content-Type"))
 		})
 	}
 }

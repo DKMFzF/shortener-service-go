@@ -9,10 +9,6 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-const (
-	baseUrl = "http://localhost:8080/"
-)
-
 func main() {
 	endpoint := "http://localhost:8080/"
 

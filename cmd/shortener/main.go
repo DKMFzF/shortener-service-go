@@ -1,16 +1,15 @@
 package main
 
 import (
-	"errors"
-	"log"
-	"net/http"
-	"os"
 	"shortener/internal/app"
+	"shortener/internal/router"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	if err := app.NewApp().Run(); errors.Is(err, http.ErrServerClosed) {
-		log.Fatalf("%v", err)
-		os.Exit(1)
-	}
+	app := app.New()
+	app.Router.Use(gin.Recovery())
+	router.SetupRouter(app.Router)
+	app.Run()
 }

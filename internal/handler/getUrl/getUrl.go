@@ -3,29 +3,28 @@ package getUrl
 import (
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-func GetUrlHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "not GET", http.StatusBadRequest)
+func GetUrlHandler(c *gin.Context) {
+	if c.Request.Method != http.MethodGet {
+		c.String(http.StatusBadRequest, "Bad Method. Use GET")
 		return
 	}
 
-	contentType := r.Header.Get("Content-Type")
-	if !strings.Contains(contentType, "text/plain; charset=utf-8") {
-		http.Error(w, "Content-Type not text/plain; charset=utf-8", http.StatusBadRequest)
+	if !strings.Contains(c.GetHeader("Content-Type"), "text/plain; charset=utf-8") {
+		c.String(http.StatusBadRequest, "Bad Header type")
 		return
 	}
 
-	id := r.PathValue("id")
+	id := c.Param("id")
 	if id == "" {
-		http.Error(w, "Not id", http.StatusBadRequest)
+		c.String(http.StatusBadRequest, "Not param id")
 		return
 	}
 
 	// TODO: write service logic for get url
 
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("https://practicum.yandex.ru/"))
+	c.String(http.StatusOK, "https://practicum.yandex.ru/")
 }

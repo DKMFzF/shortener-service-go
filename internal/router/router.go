@@ -1,19 +1,19 @@
 package router
 
 import (
-	"net/http"
-
 	"shortener/internal/handler/getUrl"
 	"shortener/internal/handler/pong"
 	"shortener/internal/handler/short"
+
+	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *http.ServeMux {
-	mux := http.NewServeMux()
+func SetupRouter(router *gin.Engine) *gin.RouterGroup {
+	apiGroup := router.Group("/api")
 
-	mux.Handle(`GET /ping`, http.HandlerFunc(pong.PongHandler))
-	mux.Handle(`POST /`, http.HandlerFunc(short.ShortHandler))
-	mux.Handle(`GET /{id}`, http.HandlerFunc(getUrl.GetUrlHandler))
+	apiGroup.GET("/ping", pong.PongHandler)
+	apiGroup.GET("/:id", getUrl.GetUrlHandler)
+	apiGroup.POST("/", short.ShortHandler)
 
-	return mux
+	return apiGroup
 }

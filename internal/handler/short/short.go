@@ -1,46 +1,45 @@
 package short
 
 import (
-	"io"
 	"net/http"
 	"net/url"
-	"shortener/internal/service"
+	"shortener/internal/service/resizeUrl"
+
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-func ShortHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST", http.StatusBadRequest)
+func ShortHandler(c *gin.Context) {
+	if c.Request.Method != http.MethodPost {
+		c.String(http.StatusBadRequest, "")
 		return
 	}
 
-	contentType := r.Header.Get("Content-Type")
-	if !strings.Contains(contentType, "text/plain; charset=utf-8") {
-		http.Error(w, "Content-Type must be text/plain; charset=utf-8", http.StatusUnsupportedMediaType)
+	if !strings.Contains(c.GetHeader("Content-Type"), "text/plain; charset=utf-8") {
+		c.String(http.StatusBadRequest, "Bad Contet-Type")
 		return
 	}
 
-	body, err := io.ReadAll(r.Body)
+	body, err := c.GetRawData()
 	if err != nil {
-		http.Error(w, "Not URL", http.StatusBadGateway)
+		c.String(http.StatusBadRequest, "Not URL")
 		return
 	}
 
 	originUrl := string(body)
 	if originUrl == "" {
-		http.Error(w, "not url", http.StatusBadRequest)
+		c.String(http.StatusBadRequest, "Not Url in body")
 		return
 	}
 
 	if _, err := url.ParseRequestURI(originUrl); err != nil {
-		http.Error(w, `It's not URL`, http.StatusBadRequest)
+		c.String(http.StatusBadRequest, "It's not URL")
 		return
 	}
 
-	shortCode := service.ResizeUrl(originUrl)
+	shortCode := resizeUrl.ResizeUrl(originUrl)
 	resStr := "http://localhost:8080/" + shortCode
 
-	w.Header().Set("Content-type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(resStr))
+	c.Data(http.StatusCreated, "text/plain; charset=utf-8", []byte(resStr))
 }

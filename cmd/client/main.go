@@ -3,47 +3,37 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
-	"net/http"
-	"net/url"
 	"os"
 	"strings"
+
+	"github.com/go-resty/resty/v2"
 )
 
 func main() {
 	endpoint := "http://localhost:8080/"
-	data := url.Values{}
 
 	fmt.Println("Введите длинный URL")
 	reader := bufio.NewReader(os.Stdin)
-	long, err := reader.ReadString('\n')
+	longUrl, err := reader.ReadString('\n')
 	if err != nil {
 		panic(err)
 	}
 
-	long = strings.TrimSuffix(long, "\n")
-	data.Set("url", long)
+	longUrl = strings.TrimSuffix(longUrl, "\n")
 
-	client := http.Client{}
+	client := resty.New()
 
-	req, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(data.Encode()))
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-from-urlencoded")
+	resp, err := client.R().
+		SetFormData(map[string]string{
+			"url": longUrl,
+		}).
+		Post(endpoint)
 
-	res, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Статус-код ", res.Status)
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(string(body))
+	fmt.Println("status-code:", resp.StatusCode())
+	fmt.Println("response:")
+	fmt.Println(resp.String())
 }

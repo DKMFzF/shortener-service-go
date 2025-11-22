@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"shortener/internal/app/flags"
 	"syscall"
 	"time"
 
@@ -30,8 +31,10 @@ func (app *App) Run() {
 }
 
 func (app *App) StartServer() {
+	addr := flags.ParseFlags()
+
 	app.Server = http.Server{
-		Addr:    ":8080",
+		Addr:    addr,
 		Handler: app.Router,
 	}
 

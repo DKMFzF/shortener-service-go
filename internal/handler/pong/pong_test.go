@@ -24,19 +24,19 @@ func TestPongHandler(t *testing.T) {
 		},
 	}
 
+	gin.SetMode(gin.TestMode)
+
+	router := gin.New()
+	router.GET("/ping", PongHandler)
+
+	ts := httptest.NewServer(router)
+	defer ts.Close()
+
+	client := resty.New()
+	client.SetBaseURL(ts.URL)
+
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			gin.SetMode(gin.TestMode)
-
-			router := gin.New()
-			router.GET("/ping", PongHandler)
-
-			ts := httptest.NewServer(router)
-			defer ts.Close()
-
-			client := resty.New()
-			client.SetBaseURL(ts.URL)
-
 			resp, err := client.R().Get("/ping")
 			if err != nil {
 				panic(err)

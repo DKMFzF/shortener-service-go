@@ -2,9 +2,11 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
+	"shortener/internal/configs"
 	"syscall"
 	"time"
 
@@ -16,11 +18,13 @@ type App struct {
 	Context context.Context
 	Cancel  context.CancelCauseFunc
 	Router  *gin.Engine
+	Config  *configs.Config
 }
 
 func New() *App {
 	return &App{
 		Router: gin.New(),
+		Config: configs.New(),
 	}
 }
 
@@ -31,11 +35,12 @@ func (app *App) Run() {
 
 func (app *App) StartServer() {
 	app.Server = http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + app.Config.Addr,
 		Handler: app.Router,
 	}
 
 	go func() {
+		fmt.Printf("\nServer start on port: %s\r\n\n", app.Config.Addr)
 		if err := app.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			panic(err)
 		}

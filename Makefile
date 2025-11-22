@@ -1,6 +1,13 @@
+# port in .env file
 run:
 	@echo "[ Runing... ]"
 	@go run ./cmd/shortener/main.go
+	@echo "[ Final ]"
+
+# custom port
+run-p:
+	@echo "[ Runing on costom port $(PORT)... ]"
+	@go run ./cmd/shortener/main.go --port=$(PORT)
 	@echo "[ Final ]"
 
 build:

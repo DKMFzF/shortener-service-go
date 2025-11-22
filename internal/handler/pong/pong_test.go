@@ -26,7 +26,7 @@ func TestPongHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			ts := httptest.NewServer(http.HandlerFunc(PongHandler))
+			ts := httptest.NewServer(PongHandler)
 			defer ts.Close()
 
 			client := resty.New()

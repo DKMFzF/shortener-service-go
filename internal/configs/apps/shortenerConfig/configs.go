@@ -1,4 +1,4 @@
-package configs
+package shortenerConfig
 
 import (
 	"shortener/internal/configs/flags"

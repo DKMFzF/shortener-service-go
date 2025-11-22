@@ -8,7 +8,7 @@ var (
 	CustomAddr = flag.String("port", "", "custom address and port to run server")
 )
 
-func ParseFlags() string {
+func ParsePort() string {
 	flag.Parse()
 	return *CustomAddr
 }

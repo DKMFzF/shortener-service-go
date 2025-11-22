@@ -9,7 +9,7 @@ type Config struct {
 }
 
 func New() *Config {
-	addr := flags.ParseFlags()
+	addr := flags.ParsePort()
 
 	if addr == "" {
 		// TODO: сделать подкачку .env файла

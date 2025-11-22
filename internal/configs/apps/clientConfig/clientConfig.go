@@ -1,11 +1,18 @@
 package clientConfig
 
+import "shortener/internal/configs/flags"
+
 type ClientConfig struct {
-	Addr string
+	Url string
 }
 
 func New() *ClientConfig {
+	endpoint := flags.ParseEndpoint()
+	if endpoint == "" {
+		endpoint = "ping"
+	}
+
 	return &ClientConfig{
-		Addr: "5050",
+		Url: "http://localhost:" + "8080" + "/api" + endpoint,
 	}
 }

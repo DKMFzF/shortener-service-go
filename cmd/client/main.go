@@ -1,33 +1,28 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"shortener/internal/configs/apps/clientConfig"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
 )
 
 func main() {
-	endpoint := "http://localhost:8080/"
+	endpoint := clientConfig.New()
 
-	fmt.Println("Введите длинный URL")
-	reader := bufio.NewReader(os.Stdin)
-	longUrl, err := reader.ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-
-	longUrl = strings.TrimSuffix(longUrl, "\n")
+	longUrl := strings.TrimSuffix(endpoint.Url, "\n")
+	fmt.Println("url req:", longUrl)
 
 	client := resty.New()
 
+	// TODO: добавить кастом под каждый эндпоинт
 	resp, err := client.R().
+		SetHeader("Content-Type", "text/plain; charset=utf-8").
 		SetFormData(map[string]string{
 			"url": longUrl,
 		}).
-		Post(endpoint)
+		Get(endpoint.Url)
 
 	if err != nil {
 		panic(err)

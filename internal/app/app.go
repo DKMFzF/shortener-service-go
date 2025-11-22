@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"shortener/internal/configs"
+	config "shortener/internal/configs/apps/shortenerConfig"
 	"syscall"
 	"time"
 
@@ -18,13 +18,13 @@ type App struct {
 	Context context.Context
 	Cancel  context.CancelCauseFunc
 	Router  *gin.Engine
-	Config  *configs.Config
+	Config  *config.Config
 }
 
 func New() *App {
 	return &App{
 		Router: gin.New(),
-		Config: configs.New(),
+		Config: config.New(),
 	}
 }
 

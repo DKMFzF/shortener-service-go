@@ -1,12 +1,12 @@
 package getUrl
 
 import (
-	"io"
-	"net/http"
 	"net/http/httptest"
 	"shortener/test"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,28 +30,27 @@ func TestGetUrlHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			r := httptest.NewRequest(http.MethodGet, tt.Want.URL, nil)
+			gin.SetMode(gin.TestMode)
 
-			// add param in url
-			r.SetPathValue("id", tt.Want.URL[1:])
-			r.Header.Set("Content-Type", "text/plain; charset=utf-8")
+			router := gin.New()
+			router.GET("/:id", GetUrlHandler)
 
-			w := httptest.NewRecorder()
+			ts := httptest.NewServer(router)
+			defer ts.Close()
 
-			GetUrlHandler(w, r)
-			res := w.Result()
+			client := resty.New()
+			client.SetBaseURL(ts.URL)
 
-			assert.Equal(t, tt.Want.Code, res.StatusCode)
-			defer res.Body.Close()
+			resp, err := client.R().
+				SetHeader("Content-Type", "text/plain; charset=utf-8").
+				Get(tt.Want.URL)
 
-			resBody, err := io.ReadAll(res.Body)
 			if err != nil {
-				t.Fatalf("Error in read resBody in handler: %v", err)
-				return
+				panic(err)
 			}
 
-			require.Equal(t, tt.Want.Response, string(resBody))
-			assert.Equal(t, res.Header.Get("Content-Type"), tt.Want.ContentType)
+			require.Equal(t, tt.Want.Response, string(resp.Body()))
+			assert.Equal(t, resp.Header().Get("Content-Type"), tt.Want.ContentType)
 		})
 	}
 }

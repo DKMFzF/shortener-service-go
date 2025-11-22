@@ -1,13 +1,12 @@
 package short
 
 import (
-	"io"
-	"net/http"
 	"net/http/httptest"
 	"shortener/test"
-	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -44,26 +43,28 @@ func TestShortHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			r := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(tt.Want.URL))
-			r.Header.Set("Content-Type", "text/plain; charset=utf-8")
+			gin.SetMode(gin.TestMode)
 
-			w := httptest.NewRecorder()
+			router := gin.New()
+			router.POST("/", ShortHandler)
 
-			ShortHandler(w, r)
+			ts := httptest.NewServer(router)
+			defer ts.Close()
 
-			res := w.Result()
+			client := resty.New()
+			client.SetBaseURL(ts.URL)
 
-			assert.Equal(t, tt.Want.Code, res.StatusCode)
-			defer res.Body.Close()
+			resp, err := client.R().
+				SetHeader("Content-Type", "text/plain; charset=utf-8").
+				SetBody(tt.Want.URL).
+				Post("/")
 
-			resBody, err := io.ReadAll(res.Body)
 			if err != nil {
-				t.Fatalf("Error read resBody: %v", err)
-				return
+				panic(err)
 			}
 
-			require.Equal(t, tt.Want.Response, string(resBody))
-			assert.Equal(t, tt.Want.ContentType, res.Header.Get("Content-Type"))
+			require.Equal(t, tt.Want.Response, string(resp.Body()))
+			assert.Equal(t, tt.Want.ContentType, resp.Header().Get("Content-Type"))
 		})
 	}
 }

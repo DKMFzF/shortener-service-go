@@ -2,21 +2,27 @@ package shortenerConfig
 
 import (
 	"shortener/internal/configs/flags"
+
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Addr string
+	Addr string `env:"PORT" envDefault:"8080"`
 }
 
 func New() *Config {
+	_ = godotenv.Load()
+
+	cfg := Config{}
+	if err := env.Parse(&cfg); err != nil {
+		return nil
+	}
+
 	addr := flags.ParsePort()
-
-	if addr == "" {
-		// TODO: сделать подкачку .env файла
-		addr = "8080"
+	if addr != "" {
+		cfg.Addr = addr
 	}
 
-	return &Config{
-		Addr: addr,
-	}
+	return &cfg
 }

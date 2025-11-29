@@ -33,7 +33,7 @@ build-clean:
 	@rm -rf ./bin/*
 	@echo "[ Final ]"
 
-# docker
+# docker-dev
 
 docker-b-dev:
 	@echo "[ Docker build... ]"
@@ -43,6 +43,18 @@ docker-b-dev:
 docker-r-dev:
 	@echo "[ Docker start... ]"
 	docker run -p 8080:8080 --name shortener-service_dev -d shortener-service_dev
+	@echo "[ Final ]"
+
+# docker-watch
+
+docker-b-watch:
+	@echo "[ Docker build... ]"
+	docker build -t shortener-service_watch -f ./docker/Dockerfile.watch . 
+	@echo "[ Final ]"
+
+docker-r-watch:
+	@echo "[ Docker run... ]"
+	docker run -p 8080:8080 --name shortener-service_watch -d shortener-service_watch
 	@echo "[ Final ]"
 
 test-all:

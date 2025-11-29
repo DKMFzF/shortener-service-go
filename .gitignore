@@ -16,7 +16,8 @@
 # Binaries
 cmd/shortener/main
 cmd/shortener/shortener
-bin/*
+bin/main
+bin/build-errors.log
 
 # Dependency directories (remove the comment below to include it)
 vendor/
@@ -26,4 +27,4 @@ vendor/
 .vscode
 
 # logs
-log/*
+logs/*

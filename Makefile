@@ -57,6 +57,18 @@ docker-r-watch:
 	docker run -p 8080:8080 --name shortener-service_watch -d shortener-service_watch
 	@echo "[ Final ]"
 
+# docker-prod
+
+docker-b-prod:
+	@echo "[ Docker build... ]"
+	docker build -t shortener-service_prod -f ./docker/Dockerfile.prod . 
+	@echo "[ Final ]"
+
+docker-r-prod:
+	@echo "[ Docker run... ]"
+	docker run -p 8080:8080 --name shortener-service_prod -d shortener-service_prod
+	@echo "[ Final ]"
+
 test-all:
 	@echo "[ Testing... ]"
 	@go test count 1 ./...

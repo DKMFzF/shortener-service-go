@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"os/signal"
@@ -9,8 +10,6 @@ import (
 	"shortener/internal/logger"
 	"syscall"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type App struct {

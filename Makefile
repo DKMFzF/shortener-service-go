@@ -69,6 +69,22 @@ docker-r-prod:
 	docker run -p 8080:8080 --name shortener-service_prod -d shortener-service_prod
 	@echo "[ Final ]"
 
+# docker compose
+
+up:
+	@echo "[ Docker run... ]"
+	docker compose up --build
+	@echo "[ Docker compose down... ]"
+	docker compose down
+	@echo "[ Final ]"
+
+delete:
+	@echo "[ Docker compose down volumes ]"
+	docker compose down --volumes
+	@echo "[ Final ]"
+
+# tests
+
 test-all:
 	@echo "[ Testing... ]"
 	@go test count 1 ./...

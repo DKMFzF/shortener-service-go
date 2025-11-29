@@ -1,0 +1,18 @@
+services:
+  shortener-service:
+    build:
+      context: ./
+      dockerfile: ./docker/Dockerfile.${MOD}
+    hostname: shortener-service
+    container_name: shortener-service
+    environment:
+      PORT: ${PORT}
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - service-net 
+    restart: always
+
+networks:
+  service-net:
+    driver: bridge

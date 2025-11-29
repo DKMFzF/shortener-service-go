@@ -12,9 +12,9 @@ type Logger struct {
 func New() *Logger {
 	config := zap.NewProductionConfig()
 
-	config.OutputPaths = []string{"stdout", "logs/app.log"}
+	//config.OutputPaths = []string{"stdout", "logs/app.log"}
 	config.Level.SetLevel(zapcore.ErrorLevel)
-	config.Encoding = "json"
+	//config.Encoding = "json"
 
 	rawLogger, err := config.Build()
 	if err != nil {

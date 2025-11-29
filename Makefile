@@ -65,3 +65,8 @@ test-all-full-info:
 	@go test -v ./...
 	@echo "[ Final ]"
 
+logger-clean:
+	@echo "[ Logger clean... ]"
+	@rm -rf ./logs/*
+	@echo "[ Final ]"
+

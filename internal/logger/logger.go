@@ -9,7 +9,7 @@ type Logger struct {
 	log *zap.SugaredLogger
 }
 
-func (l *Logger) New() *Logger {
+func New() *Logger {
 	config := zap.NewProductionConfig()
 
 	config.OutputPaths = []string{"stdout", "logs/app.log"}

@@ -2,15 +2,14 @@ package app
 
 import (
 	"context"
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"os/signal"
 	config "shortener/internal/configs/apps/shortenerConfig"
+	"shortener/internal/logger"
 	"syscall"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type App struct {
@@ -19,12 +18,14 @@ type App struct {
 	Cancel  context.CancelCauseFunc
 	Router  *gin.Engine
 	Config  *config.Config
+	Logger  *logger.Logger
 }
 
 func New() *App {
 	return &App{
 		Router: gin.New(),
 		Config: config.New(),
+		Logger: logger.New(),
 	}
 }
 
@@ -40,8 +41,9 @@ func (app *App) StartServer() {
 	}
 
 	go func() {
-		fmt.Printf("\nServer start on port: %s\r\n\n", app.Config.Addr)
+		app.Logger.Infof("\nServer start on port: %s\r\n\n", app.Config.Addr)
 		if err := app.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			app.Logger.Fatalf("panic: %v", err)
 			panic(err)
 		}
 	}()
@@ -57,6 +59,7 @@ func (app *App) GracefulShutdown() {
 	defer cancel()
 
 	if err := app.Server.Shutdown(ctx); err != nil {
+		app.Logger.Fatalf("panic %v", err)
 		panic(err)
 	}
 }

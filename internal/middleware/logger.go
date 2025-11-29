@@ -1,14 +1,14 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
+	"shortener/internal/logger"
 )
 
-func LoggerMiddleware(next http.Handler) http.Handler {
+func LoggerMiddleware(next http.Handler, logger logger.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		log.Printf("%s : %v", r.Method, r.URL.Path)
+		logger.Infof("%s : %v", r.Method, r.URL.Path)
 
 		next.ServeHTTP(w, r)
 	})

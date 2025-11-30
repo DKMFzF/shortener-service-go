@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🐛 Bug Fixes
+
+- *(create_release)* Stage next version #3
+- *(create_release)* Stage next version #3
+
+## [#Changelog] - 2025-11-30
+
 ### 🚀 Features
 
 - *(README)* Add readme
@@ -51,6 +58,7 @@ All notable changes to this project will be documented in this file.
 ### 📚 Documentation
 
 - Update CHANGELOG for # Changelog
+- Update CHANGELOG for #Changelog
 
 ### 🧪 Testing
 

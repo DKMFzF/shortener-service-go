@@ -28,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - *(Docker.prod)* Added dockerfile for prod on grc
 - *(docker-compose)* Added config
 - *(create_release)* Auth update CHANGELOG
+- *(CHANGELOG)* Update CHANGELOG
+- *(create_release)* Added tags for version
 
 ### 🐛 Bug Fixes
 
@@ -35,6 +37,9 @@ All notable changes to this project will be documented in this file.
 - *(app)* Delete fmt on imports
 - Delete rule for main branch in ci pull_request
 - *(ci/create_release)* Added rules for commits
+- *(create_release)* Stage next version
+- *(create_release)* Stage next version #2
+- *(create_release)* Stage next version #3
 
 ### 🚜 Refactor
 

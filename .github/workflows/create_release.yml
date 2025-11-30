@@ -51,6 +51,10 @@ jobs:
     name: Release
     needs: build
     runs-on: ubuntu-latest
+
+    #permissions:
+      #contents: write  
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -67,11 +71,13 @@ jobs:
       - name: Get next version
         id: version
         run: |
-          NEXT_VERSION=$(git-cliff --bump | head -n 1 | tr -d '\n')
+          NEXT_VERSION=$(git-cliff --bump | head -n1 | tr -d '[:space:]')
           echo "next=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "Next version: $NEXT_VERSION"
 
       - name: Create and push tag
         run: |
+          echo "Creating tag: ${{ steps.version.outputs.next }}"
           git tag ${{ steps.version.outputs.next }}
           git push origin ${{ steps.version.outputs.next }}
 

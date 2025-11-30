@@ -40,12 +40,17 @@ All notable changes to this project will be documented in this file.
 - *(create_release)* Stage next version
 - *(create_release)* Stage next version #2
 - *(create_release)* Stage next version #3
+- *(create_release)* Stage next version #3
 
 ### 🚜 Refactor
 
 - *(getUrl_test)* Optimal for loop
 - *(pong_test)* Optimal for loop
 - *(short_test)* Optimal for loop
+
+### 📚 Documentation
+
+- Update CHANGELOG for # Changelog
 
 ### 🧪 Testing
 

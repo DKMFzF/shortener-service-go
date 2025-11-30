@@ -1,0 +1,19 @@
+[git]
+conventional_commits = true
+tag_pattern = "v*"
+
+[changelog]
+header = "# Changelog\nAll notable changes to this project will be documented in this file.\n"
+
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message }}
+{% endfor %}
+{% endfor %}
+"""
+
+[release]
+name_template = "{{ version }}"
+

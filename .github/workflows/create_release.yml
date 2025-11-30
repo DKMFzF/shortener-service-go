@@ -66,10 +66,10 @@ jobs:
           mv git-cliff-2.2.1/git-cliff /usr/local/bin/
 
       - name: Get next version
-        id: version
-        run: |
-          NEXT_VERSION=$(git-cliff --bump --dry-run | grep -oP 'v\d+\.\d+\.\d+')
-          echo "next=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          id: version
+          run: |
+            NEXT_VERSION=$(git-cliff --bump)
+            echo "next=$NEXT_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create and push tag
         run: |

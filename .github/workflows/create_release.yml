@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "CHANGELOG.md"
   release:
     types: [create]
 
@@ -45,26 +47,35 @@ jobs:
 
   release:
     name: New Release
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # all commits 
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download and install git-cliff
         run: |
           curl -L "https://github.com/orhun/git-cliff/releases/download/v2.2.1/git-cliff-2.2.1-x86_64-unknown-linux-gnu.tar.gz" -o git-cliff.tar.gz
           tar -xzf git-cliff.tar.gz
-          mv git-ckiff-2.2.1/git-cliff /usr/local/bin/
+          mv git-cliff-2.2.1/git-cliff /usr/local/bin/
 
       - name: Generate CHANGELOG
         run: git-cliff --config cliff.toml --output CHANGELOG.md
 
-      - name: Commit CHANGELOG 
+      - name: Commit CHANGELOG
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add CHANGELOG.md
-          git commit -m "feat(CHANGELOG): added new commits in CHANGELOG"
-          git push origin https://github.com/${{ github.repository }}.git HEAD:main
-      
+          
+          if git diff --cached --quiet; then
+            echo "No changes, skipping commit."
+            exit 0
+          fi
+
+          git commit -m "feat(CHANGELOG): update CHANGELOG"
+          git push origin main
+

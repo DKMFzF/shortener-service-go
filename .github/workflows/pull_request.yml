@@ -2,8 +2,6 @@ name: Pull Request - Build and Tests
 
 on:
   pull_request:
-    branches-ignore:
-      - main
     branches:
       - dev
       - infra

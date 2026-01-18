@@ -2,29 +2,31 @@ package getUrl
 
 import (
 	"net/http"
-	"strings"
+	"shortener/internal/errors"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetUrlHandler(c *gin.Context) {
 	if c.Request.Method != http.MethodGet {
-		c.String(http.StatusBadRequest, "Bad Method. Use GET")
+		c.Error(errors.NewMethodNotAllowed(c.Request.Method))
 		return
 	}
 
-	if !strings.Contains(c.GetHeader("Content-Type"), "text/plain; charset=utf-8") {
-		c.String(http.StatusBadRequest, "Bad Header type")
+	contentType := c.GetHeader("Content-Type")
+	if contentType != "" && contentType != "text/plain; charset=utf-8" {
+		c.Error(errors.NewBadRequest(
+			"Invalid Content-Type. Expected text/plain; charset=utf-8 or empty",
+			nil,
+		))
 		return
 	}
 
 	id := c.Param("id")
 	if id == "" {
-		c.String(http.StatusBadRequest, "Not param id")
+		c.Error(errors.NewValidationError("ID parameter is required", nil))
 		return
 	}
-
-	// TODO: write service logic for get url
 
 	c.String(http.StatusOK, "https://practicum.yandex.ru/")
 }

@@ -1,0 +1,23 @@
+basePath: /api/v1
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  description: URL shortener service
+  title: Shortener Service
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      description: Возвращает pong
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Проверка доступности сервиса
+      tags:
+      - system
+swagger: "2.0"

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Middleware(logger logger.Logger) gin.HandlerFunc {
+func MiddlewareLogger(logger logger.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.Next()
 		logger.Infof(

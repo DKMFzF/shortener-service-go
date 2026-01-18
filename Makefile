@@ -110,3 +110,6 @@ clean-mod-cache:
 	@go clean -modcache
 	@echo "[ Final ]"
 
+swagger:
+	swag init -g shortener/main.go -d ./cmd,./internal
+

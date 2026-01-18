@@ -4,10 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🚀 Features
+
+- *(app)* Added bootstrap
+- *(swagger)* Added docs
+
 ### 🐛 Bug Fixes
 
 - *(create_release)* Stage next version #3
 - *(create_release)* Stage next version #3
+
+### 📚 Documentation
+
+- Update CHANGELOG for
 
 ## [#Changelog] - 2025-11-30
 

@@ -2,14 +2,17 @@ package app
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"os/signal"
 	config "shortener/internal/configs/apps/shortenerConfig"
 	"shortener/internal/logger"
+	"shortener/internal/middleware"
+	"shortener/internal/router"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type App struct {
@@ -34,12 +37,20 @@ func (app *App) Run() {
 	app.GracefulShutdown()
 }
 
-func (app *App) StartServer() {
+func (app *App) _Bootstrap() *App {
 	app.Server = http.Server{
 		Addr:    ":" + app.Config.Addr,
 		Handler: app.Router,
 	}
 
+	app.Router.Use(gin.Recovery(), middleware.MiddlewareLogger(*app.Logger))
+	router.SetupRouter(app.Router)
+
+	return app
+}
+
+func (app *App) StartServer() {
+	app._Bootstrap()
 	go func() {
 		app.Logger.Infof("\nServer start on port: %s\r\n\n", app.Config.Addr)
 		if err := app.Server.ListenAndServe(); err != nil && err != http.ErrServerClosed {

@@ -1,15 +1,19 @@
 package middleware
 
 import (
-	"net/http"
 	"shortener/internal/logger"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-func LoggerMiddleware(next http.Handler, logger logger.Logger) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		logger.Infof("%s : %v", r.Method, r.URL.Path)
-
-		next.ServeHTTP(w, r)
-	})
+func MiddlewareLogger(logger logger.Logger) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.Next()
+		logger.Infof(
+			"%s", "Request "+
+				ctx.Request.RequestURI+
+				" Response Code "+strconv.Itoa(ctx.Writer.Status()),
+		)
+	}
 }

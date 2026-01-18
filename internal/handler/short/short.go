@@ -3,43 +3,50 @@ package short
 import (
 	"net/http"
 	"net/url"
+	"shortener/internal/errors"
 	"shortener/internal/service/resizeUrl"
-
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func ShortHandler(c *gin.Context) {
 	if c.Request.Method != http.MethodPost {
-		c.String(http.StatusBadRequest, "")
+		c.Error(errors.NewMethodNotAllowed(c.Request.Method))
 		return
 	}
 
-	if !strings.Contains(c.GetHeader("Content-Type"), "text/plain; charset=utf-8") {
-		c.String(http.StatusBadRequest, "Bad Contet-Type")
+	contentType := c.GetHeader("Content-Type")
+	if contentType != "text/plain; charset=utf-8" {
+		c.Error(errors.NewBadRequest(
+			"Invalid Content-Type. Expected text/plain; charset=utf-8",
+			nil,
+		))
 		return
 	}
 
 	body, err := c.GetRawData()
 	if err != nil {
-		c.String(http.StatusBadRequest, "Not URL")
+		c.Error(errors.NewBadRequest("Failed to read request body", err))
 		return
 	}
 
 	originUrl := string(body)
 	if originUrl == "" {
-		c.String(http.StatusBadRequest, "Not Url in body")
+		c.Error(errors.NewValidationError("URL is required in request body", nil))
 		return
 	}
 
 	if _, err := url.ParseRequestURI(originUrl); err != nil {
-		c.String(http.StatusBadRequest, "It's not URL")
+		c.Error(errors.NewValidationError("Invalid URL format", err))
 		return
 	}
 
-	shortCode := resizeUrl.ResizeUrl(originUrl)
-	resStr := "http://localhost:8080/" + shortCode
+	shortCode, err := resizeUrl.ResizeUrl(originUrl)
+	if err != nil {
+		c.Error(errors.NewInternalError(err))
+		return
+	}
 
+	resStr := "http://localhost:8080/" + shortCode
 	c.Data(http.StatusCreated, "text/plain; charset=utf-8", []byte(resStr))
 }

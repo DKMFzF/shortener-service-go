@@ -43,7 +43,7 @@ func (app *App) _Bootstrap() *App {
 		Handler: app.Router,
 	}
 
-	app.Router.Use(gin.Recovery(), middleware.Middleware(*app.Logger))
+	app.Router.Use(gin.Recovery(), middleware.MiddlewareLogger(*app.Logger))
 	router.SetupRouter(app.Router)
 
 	return app

@@ -7,18 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: integration with Elastic Search
+
 func GetUrlHandler(c *gin.Context) {
 	if c.Request.Method != http.MethodGet {
 		c.Error(errors.NewMethodNotAllowed(c.Request.Method))
-		return
-	}
-
-	contentType := c.GetHeader("Content-Type")
-	if contentType != "" && contentType != "text/plain; charset=utf-8" {
-		c.Error(errors.NewBadRequest(
-			"Invalid Content-Type. Expected text/plain; charset=utf-8 or empty",
-			nil,
-		))
 		return
 	}
 

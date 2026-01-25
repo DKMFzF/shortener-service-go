@@ -26,8 +26,8 @@ func New(driver *gin.Engine, logger *logger.Logger) *BaseController {
 func (c *BaseController) SetupRouter() *gin.RouterGroup {
 	apiGroup := c.Router.Group("/api/v1")
 	{
-		apiGroup.GET("/:id", getUrl.GetUrlHandler)
-		apiGroup.POST("/", short.ShortHandler)
+		apiGroup.GET("/links/:id", getUrl.GetUrlHandler)
+		apiGroup.POST("/links", short.ShortHandler)
 	}
 
 	c.Router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

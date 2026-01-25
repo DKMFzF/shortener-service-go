@@ -25,10 +25,11 @@ type App struct {
 }
 
 func New() *App {
+	logger := logger.New()
 	return &App{
-		Controller: router.New(gin.New(), logger.New()),
+		Controller: router.New(gin.New(), logger),
 		Config:     config.New(),
-		Logger:     logger.New(),
+		Logger:     logger,
 	}
 }
 

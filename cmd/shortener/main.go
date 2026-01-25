@@ -3,7 +3,13 @@ package main
 import (
 	_ "shortener/docs"
 	"shortener/internal/app"
+
+	valid "github.com/asaskevich/govalidator"
 )
+
+func init() {
+	valid.SetFieldsRequiredByDefault(true)
+}
 
 // @title Shortener Service
 // @version 1.0

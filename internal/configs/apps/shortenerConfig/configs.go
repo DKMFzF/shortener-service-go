@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	Addr string `env:"PORT" envDefault:"8080"`
+	Addr    string `env:"PORT" envDefault:"8080"`
+	Version string `env:"VERSION" envDefault:"1"`
 }
 
 func New() *Config {

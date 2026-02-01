@@ -15,6 +15,66 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/links/": {
+            "post": {
+                "description": "Возвращает сокращенный url и meta информацию о нём",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "system"
+                ],
+                "summary": "сокращение url",
+                "parameters": [
+                    {
+                        "description": "Параметры запроса",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/short.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/short.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/links/{id}": {
+            "get": {
+                "description": "Возвращает url",
+                "tags": [
+                    "system"
+                ],
+                "summary": "найти сокращенный url в системе",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID сокращенной ссылки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "https://practicum.yandex.ru/",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "Возвращает pong",
@@ -29,6 +89,46 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "short.MetaInfo": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "short.Request": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/short.UrlToShort"
+                },
+                "meta": {
+                    "$ref": "#/definitions/short.MetaInfo"
+                }
+            }
+        },
+        "short.Response": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/short.UrlToShort"
+                }
+            }
+        },
+        "short.UrlToShort": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string"
                 }
             }
         }

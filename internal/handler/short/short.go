@@ -27,6 +27,15 @@ type Response struct {
 	Data *UrlToShort `json:"data" valid:"required"`
 }
 
+// Short godoc
+// @Summary сокращение url
+// @Description Возвращает сокращенный url и meta информацию о нём
+// @Accept json
+// @Produce json
+// @Tags system
+// @Param request body Request true "Параметры запроса"
+// @Success 200 {object} Response "Успешный ответ"
+// @Router /api/v1/links/ [post]
 func ShortHandler(c *gin.Context) {
 	if c.Request.Method != http.MethodPost {
 		c.Error(errors.NewMethodNotAllowed(c.Request.Method))

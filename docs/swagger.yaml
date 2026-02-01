@@ -1,4 +1,29 @@
 basePath: /api/v1
+definitions:
+  short.MetaInfo:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+  short.Request:
+    properties:
+      data:
+        $ref: '#/definitions/short.UrlToShort'
+      meta:
+        $ref: '#/definitions/short.MetaInfo'
+    type: object
+  short.Response:
+    properties:
+      data:
+        $ref: '#/definitions/short.UrlToShort'
+    type: object
+  short.UrlToShort:
+    properties:
+      url:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -9,6 +34,45 @@ info:
   title: Shortener Service
   version: "1.0"
 paths:
+  /api/v1/links/:
+    post:
+      consumes:
+      - application/json
+      description: Возвращает сокращенный url и meta информацию о нём
+      parameters:
+      - description: Параметры запроса
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/short.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            $ref: '#/definitions/short.Response'
+      summary: сокращение url
+      tags:
+      - system
+  /api/v1/links/{id}:
+    get:
+      description: Возвращает url
+      parameters:
+      - description: ID сокращенной ссылки
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: https://practicum.yandex.ru/
+          schema:
+            type: string
+      summary: найти сокращенный url в системе
+      tags:
+      - system
   /ping:
     get:
       description: Возвращает pong

@@ -16,19 +16,20 @@ import (
 )
 
 type App struct {
-	Server  http.Server
-	Context context.Context
-	Cancel  context.CancelCauseFunc
-	Router  *gin.Engine
-	Config  *config.Config
-	Logger  *logger.Logger
+	Server     http.Server
+	Context    context.Context
+	Cancel     context.CancelCauseFunc
+	Controller *router.BaseController
+	Config     *config.Config
+	Logger     *logger.Logger
 }
 
 func New() *App {
+	logger := logger.New()
 	return &App{
-		Router: gin.New(),
-		Config: config.New(),
-		Logger: logger.New(),
+		Controller: router.New(gin.New(), logger),
+		Config:     config.New(),
+		Logger:     logger,
 	}
 }
 
@@ -40,15 +41,15 @@ func (app *App) Run() {
 func (app *App) _Bootstrap() *App {
 	app.Server = http.Server{
 		Addr:    ":" + app.Config.Addr,
-		Handler: app.Router,
+		Handler: app.Controller.Router,
 	}
 
-	app.Router.Use(
+	app.Controller.Router.Use(
 		gin.Recovery(),
 		middleware.MiddlewareLogger(*app.Logger),
 		middleware.NewErrorHandler(app.Logger).Handle(),
 	)
-	router.SetupRouter(app.Router)
+	app.Controller.SetupRouter()
 
 	return app
 }

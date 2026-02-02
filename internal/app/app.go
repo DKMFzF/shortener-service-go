@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,6 +47,7 @@ func (app *App) _Bootstrap() *App {
 
 	app.Controller.Router.Use(
 		gin.Recovery(),
+		gzip.Gzip(gzip.DefaultCompression),
 		middleware.MiddlewareLogger(*app.Logger),
 		middleware.NewErrorHandler(app.Logger).Handle(),
 	)

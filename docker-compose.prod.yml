@@ -1,0 +1,16 @@
+services:
+  shortener-service:
+    image: ${SHORTENER_SERVICE_IMAGE}
+    hostname: shortener-service
+    container_name: shortener-service
+    env_file:
+      - ./.env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      - service-net 
+    restart: always
+
+networks:
+  service-net:
+    driver: bridge

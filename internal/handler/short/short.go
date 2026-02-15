@@ -3,29 +3,12 @@ package short
 import (
 	"net/http"
 	"shortener/internal/errors"
+	"shortener/internal/models"
 	"shortener/internal/service/resizeUrl"
 
 	valid "github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
-
-type MetaInfo struct {
-	Title       string `json:"title" valid:"optional"`
-	Description string `json:"description" valid:"optional"`
-}
-
-type UrlToShort struct {
-	Url string `json:"url" valid:"url"`
-}
-
-type Request struct {
-	Meta *MetaInfo   `json:"meta" valid:"required"`
-	Data *UrlToShort `json:"data" valid:"required"`
-}
-
-type Response struct {
-	Data *UrlToShort `json:"data" valid:"required"`
-}
 
 // Short godoc
 // @Summary сокращение url
@@ -42,7 +25,7 @@ func ShortHandler(c *gin.Context) {
 		return
 	}
 
-	var req Request
+	var req models.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.Error(errors.NewBadRequest(
 			"Invalid JSON format or structure",
@@ -65,10 +48,11 @@ func ShortHandler(c *gin.Context) {
 		return
 	}
 
-	resData := Response{
-		Data: &UrlToShort{
+	resData := models.Response{
+		Data: &models.UrlToShort{
 			Url: "http://localhost:8080/" + shortCode,
 		},
+		Version: "1.0",
 	}
 	c.JSON(http.StatusCreated, resData)
 }

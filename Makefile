@@ -113,3 +113,23 @@ clean-mod-cache:
 swagger:
 	swag init -g shortener/main.go -d ./cmd,./internal
 
+tag-register:
+	docker tag shortener-service_prod:latest cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
+
+push-register:
+	docker push cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
+
+observe-run:
+	docker run -d \
+	    --name promtail \
+	    --restart unless-stopped \
+	    -v /var/log:/var/log:ro \
+	    -v /var/lib/docker/containers:/var/lib/docker/containers:ro \
+	    -v /var/lib/promtail:/var/lib/promtail \
+	    -v $$(pwd):/etc/promtail:ro \
+	    -v /var/run/docker.sock:/var/run/docker.sock \
+	    --network host \
+	    grafana/promtail:3.4.1 \
+	    -config.file=/etc/promtail/promtail-config.yaml \
+	    -log.level=info
+

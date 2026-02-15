@@ -1,0 +1,11 @@
+services:
+  dnat-ingress-proxy:
+    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: dev-dnat-ingress-proxy
+    ports:
+      - "80:80"
+    restart: unless-stopped
+

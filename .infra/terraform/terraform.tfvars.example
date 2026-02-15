@@ -1,0 +1,6 @@
+ssh_public_key = ""
+yc_token_id    = ""
+cloud_id       = ""
+folder_id      = ""
+sudo_name      = ""
+ip_jumbox      = ""

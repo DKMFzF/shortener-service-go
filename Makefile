@@ -1,4 +1,5 @@
 # port in .env file
+
 air:
 	@echo "[ Air start... ]"
 	air
@@ -9,11 +10,21 @@ run:
 	@go run ./cmd/shortener/main.go
 	@echo "[ Final ]"
 
-# custom port
+# custom flags
 
 run-p:
 	@echo "[ Runing on costom port $(PORT)... ]"
 	@go run ./cmd/shortener/main.go --port=$(PORT)
+	@echo "[ Final ]"
+
+run-l:
+	@echo "[ Runing service with writing logs in file ]"
+	@go run ./cmd/shortener/main.go --writingLogs
+	@echo "[ Final ]"
+
+run-p-l:
+	@echo "[ Runing service on port $(PORT) with writing logs in file]"
+	@go run ./cmd/shortener/main.go --port=$(PORT) --writingLogs
 	@echo "[ Final ]"
 
 # build
@@ -100,6 +111,8 @@ test-all-full-info:
 	@go test -v ./...
 	@echo "[ Final ]"
 
+# utils
+
 logger-clean:
 	@echo "[ Logger clean... ]"
 	@rm -rf ./logs/*
@@ -113,11 +126,15 @@ clean-mod-cache:
 swagger:
 	swag init -g shortener/main.go -d ./cmd,./internal
 
+# yndx container register
+
 tag-register:
 	docker tag shortener-service_prod:latest cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
 
 push-register:
 	docker push cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
+
+# grafana
 
 observe-run:
 	docker run -d \

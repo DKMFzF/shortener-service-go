@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	config "shortener/internal/configs/apps/shortenerConfig"
+	"shortener/internal/configs/flags"
 	"shortener/internal/logger"
 	"shortener/internal/middleware"
 	"shortener/internal/router"
@@ -26,7 +27,9 @@ type App struct {
 }
 
 func New() *App {
-	logger := logger.New()
+	logger := logger.New(
+		flags.ParseFlagIsLogsInFile(), // check --writingLogs
+	)
 	return &App{
 		Controller: router.New(gin.New(), logger),
 		Config:     config.New(),

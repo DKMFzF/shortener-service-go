@@ -9,10 +9,13 @@ type Logger struct {
 	log *zap.SugaredLogger
 }
 
-func New() *Logger {
+func New(isLogsInFile bool) *Logger {
 	config := zap.NewProductionConfig()
 
-	//config.OutputPaths = []string{"stdout", "logs/app.log"}
+	if isLogsInFile {
+		config.OutputPaths = []string{"stdout", "logs/app.log"}
+	}
+
 	config.Level.SetLevel(zapcore.ErrorLevel)
 	//config.Encoding = "json"
 

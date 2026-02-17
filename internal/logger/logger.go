@@ -5,19 +5,30 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	PATH_LOGGING          = "logs/app.log"
+	DEFAULT_LEVEL_LOGIINT = zapcore.ErrorLevel
+)
+
 type Logger struct {
 	log *zap.SugaredLogger
 }
 
-func New(isLogsInFile bool) *Logger {
+func New(isLogsInFile, isDebugLevel bool) *Logger {
 	config := zap.NewProductionConfig()
 
 	if isLogsInFile {
-		config.OutputPaths = []string{"stdout", "logs/app.log"}
+		config.OutputPaths = []string{"stdout", PATH_LOGGING}
 	}
 
-	config.Level.SetLevel(zapcore.ErrorLevel)
-	//config.Encoding = "json"
+	if isDebugLevel {
+		config.Level.SetLevel(zapcore.DebugLevel)
+	} else {
+		/** default logger level */
+		config.Level.SetLevel(DEFAULT_LEVEL_LOGIINT)
+	}
+
+	config.Encoding = "json"
 
 	rawLogger, err := config.Build()
 	if err != nil {

@@ -28,7 +28,8 @@ type App struct {
 
 func New() *App {
 	logger := logger.New(
-		flags.ParseFlagIsLogsInFile(), // check --writingLogs
+		flags.ParseFlagIsLogsInFile(),  // --writingLogs
+		flags.ParseFlagIsDebugLogger(), // --debugLogger
 	)
 	return &App{
 		Controller: router.New(gin.New(), logger),

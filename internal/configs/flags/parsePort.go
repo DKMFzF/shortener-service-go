@@ -5,10 +5,14 @@ import (
 )
 
 var (
-	CustomAddr = flag.String("port", "", "custom address and port to run server")
+	CustomAddrFlag      = flag.String("port", "", "custom address and port to run server")
+	CustomAddrShortFlag = flag.String("p", "", "custom address and port to run server short")
 )
 
 func ParsePort() string {
 	flag.Parse()
-	return *CustomAddr
+	if *CustomAddrFlag == "" {
+		return *CustomAddrShortFlag
+	}
+	return *CustomAddrFlag
 }

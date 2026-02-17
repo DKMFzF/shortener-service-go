@@ -3,10 +3,14 @@ package flags
 import "flag"
 
 var (
-	IsLogsInFile = flag.Bool("writingLogs", false, "flag for writing logs in file")
+	IsLogsInFileFlag      = flag.Bool("writingLogs", false, "flag for writing logs in file")
+	IsLogsInFileShortFlag = flag.Bool("l", false, "flag for writing logs in file short")
 )
 
 func ParseFlagIsLogsInFile() bool {
 	flag.Parse()
-	return *IsLogsInFile
+	if !*IsLogsInFileFlag {
+		return *IsLogsInFileShortFlag
+	}
+	return *IsLogsInFileFlag
 }

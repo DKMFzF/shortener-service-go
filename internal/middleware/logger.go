@@ -9,11 +9,11 @@ import (
 
 func MiddlewareLogger(logger logger.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		ctx.Next()
 		logger.Infof(
 			"%s", "Request "+
 				ctx.Request.RequestURI+
 				" Response Code "+strconv.Itoa(ctx.Writer.Status()),
 		)
+		ctx.Next()
 	}
 }

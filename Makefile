@@ -1,114 +1,151 @@
-# port in .env file
+.PHONY: help air run run-p run-l run-p-l run-p-l-d run-debug \
+	build build-win build-clean \
+	docker-b-dev docker-r-dev docker-b-watch docker-r-watch \
+	docker-b-prod docker-r-prod up delete \
+	test-all test-all-cache test-all-full-info \
+	logger-clean clean-mod-cache swagger \
+	tag-register push-register observe-run
+
+APP_NAME      := shortener-service
+CMD_DIR       := ./cmd/shortener
+MAIN_PKG      := $(CMD_DIR)/main.go
+BIN_DIR       := ./bin
+BIN           := $(BIN_DIR)/main
+BIN_WIN       := $(BIN_DIR)/main.exe
+
+GO            ?= go
+DOCKER        ?= docker
+COMPOSE       ?= docker compose
+
+PORT          ?= 8080
+CODE_REGISTER ?= your-registry-id
+
+IMAGE_BASE    := $(APP_NAME)
+IMAGE_DEV     := $(IMAGE_BASE)_dev
+IMAGE_WATCH   := $(IMAGE_BASE)_watch
+IMAGE_PROD    := $(IMAGE_BASE)_prod
+
+.DEFAULT_GOAL := help
+
+# app run
 
 air:
 	@echo "[ Air start... ]"
-	air
+	@air
 	@echo "[ Final ]"
 
 run:
-	@echo "[ Runing... ]"
-	@go run ./cmd/shortener/main.go
+	@echo "[ Running... ]"
+	@$(GO) run $(MAIN_PKG)
 	@echo "[ Final ]"
 
-# custom flags
-
 run-p:
-	@echo "[ Runing on costom port $(PORT)... ]"
-	@go run ./cmd/shortener/main.go --port=$(PORT)
+	@echo "[ Running on custom port $(PORT)... ]"
+	@$(GO) run $(MAIN_PKG) -p=$(PORT)
 	@echo "[ Final ]"
 
 run-l:
-	@echo "[ Runing service with writing logs in file ]"
-	@go run ./cmd/shortener/main.go --writingLogs
+	@echo "[ Running service with writing logs in file ]"
+	@$(GO) run $(MAIN_PKG) -l
 	@echo "[ Final ]"
 
 run-p-l:
-	@echo "[ Runing service on port $(PORT) with writing logs in file]"
-	@go run ./cmd/shortener/main.go --port=$(PORT) --writingLogs
+	@echo "[ Running service on port $(PORT) with writing logs in file ]"
+	@$(GO) run $(MAIN_PKG) --p=$(PORT) --writingLogs
 	@echo "[ Final ]"
 
-# build
-
-build:
-	@echo "[ Building... ]"
-	@go build -o ./bin/main ./cmd/shortener/main.go
+run-p-l-d:
+	@echo "[ Running service on port $(PORT) with writing logs in file ]"
+	@$(GO) run $(MAIN_PKG) -p=$(PORT) -l -dl
 	@echo "[ Final ]"
 
-build-win:
+run-debug:
+	@echo "[ Running service on port $(PORT) with debug mode ]"
+	@$(GO) run $(MAIN_PKG) -p=$(PORT) -l -dl
+	@echo "[ Final]"
+
+build: $(BIN)
+
+$(BIN):
 	@echo "[ Building... ]"
-	@go build -o ./bin/main.exe ./cmd/shortener/main.go
+	@mkdir -p $(BIN_DIR)
+	@$(GO) build -o $@ $(MAIN_PKG)
+	@echo "[ Final ]"
+
+build-win: $(BIN_WIN)
+
+$(BIN_WIN):
+	@echo "[ Building (windows)... ]"
+	@mkdir -p $(BIN_DIR)
+	@GOOS=windows GOARCH=amd64 $(GO) build -o $@ $(MAIN_PKG)
 	@echo "[ Final ]"
 
 build-clean:
 	@echo "[ Builds file clean... ]"
-	@rm -rf ./bin/*
+	@rm -rf $(BIN_DIR)/*
 	@echo "[ Final ]"
 
-# docker-dev
+# docker
 
 docker-b-dev:
-	@echo "[ Docker build... ]"
-	docker build -t shortener-service_dev -f ./docker/Dockerfile.dev .
+	@echo "[ Docker build (dev)... ]"
+	@$(DOCKER) build -t $(IMAGE_DEV) -f ./docker/Dockerfile.dev .
 	@echo "[ Final ]"
 
 docker-r-dev:
-	@echo "[ Docker start... ]"
-	docker run -p 8080:8080 --name shortener-service_dev -d shortener-service_dev
+	@echo "[ Docker run (dev)... ]"
+	@$(DOCKER) run -p $(PORT):8080 --name $(IMAGE_DEV) -d $(IMAGE_DEV)
 	@echo "[ Final ]"
 
-# docker-watch
-
 docker-b-watch:
-	@echo "[ Docker build... ]"
-	docker build -t shortener-service_watch -f ./docker/Dockerfile.watch . 
+	@echo "[ Docker build (watch)... ]"
+	@$(DOCKER) build -t $(IMAGE_WATCH) -f ./docker/Dockerfile.watch .
 	@echo "[ Final ]"
 
 docker-r-watch:
-	@echo "[ Docker run... ]"
-	docker run -p 8080:8080 --name shortener-service_watch -d shortener-service_watch
+	@echo "[ Docker run (watch)... ]"
+	@$(DOCKER) run -p $(PORT):8080 --name $(IMAGE_WATCH) -d $(IMAGE_WATCH)
 	@echo "[ Final ]"
 
-# docker-prod
-
 docker-b-prod:
-	@echo "[ Docker build... ]"
-	docker build -t shortener-service_prod -f ./docker/Dockerfile.prod . 
+	@echo "[ Docker build (prod)... ]"
+	@$(DOCKER) build -t $(IMAGE_PROD) -f ./docker/Dockerfile.prod .
 	@echo "[ Final ]"
 
 docker-r-prod:
-	@echo "[ Docker run... ]"
-	docker run -p 8080:8080 --name shortener-service_prod -d shortener-service_prod
+	@echo "[ Docker run (prod)... ]"
+	@$(DOCKER) run -p $(PORT):8080 --name $(IMAGE_PROD) -d $(IMAGE_PROD)
 	@echo "[ Final ]"
 
 # docker compose
 
 up:
-	@echo "[ Docker run... ]"
-	docker compose up --build
+	@echo "[ Docker compose up... ]"
+	@$(COMPOSE) up --build
 	@echo "[ Docker compose down... ]"
-	docker compose down
+	@$(COMPOSE) down
 	@echo "[ Final ]"
 
 delete:
 	@echo "[ Docker compose down volumes ]"
-	docker compose down --volumes
+	@$(COMPOSE) down --volumes
 	@echo "[ Final ]"
 
 # tests
 
 test-all:
 	@echo "[ Testing... ]"
-	@go test count 1 ./...
+	@$(GO) test -count=1 ./...
 	@echo "[ Final ]"
 
 test-all-cache:
 	@echo "[ Testing + cache... ]"
-	@go test ./...
+	@$(GO) test ./...
 	@echo "[ Final ]"
 
 test-all-full-info:
 	@echo "[ Testing full info... ]"
-	@go test -v ./...
+	@$(GO) test -v ./...
 	@echo "[ Final ]"
 
 # utils
@@ -120,24 +157,24 @@ logger-clean:
 
 clean-mod-cache:
 	@echo "[ Clean mod cache... ]"
-	@go clean -modcache
+	@$(GO) clean -modcache
 	@echo "[ Final ]"
 
 swagger:
 	swag init -g shortener/main.go -d ./cmd,./internal
 
-# yndx container register
+# yandex-cr
 
 tag-register:
-	docker tag shortener-service_prod:latest cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
+	@$(DOCKER) tag $(IMAGE_PROD):latest cr.yandex/$(CODE_REGISTER)/$(IMAGE_PROD):latest
 
 push-register:
-	docker push cr.yandex/${CODE_REGISTER}/shortener-service_prod:latest
+	@$(DOCKER) push cr.yandex/$(CODE_REGISTER)/$(IMAGE_PROD):latest
 
-# grafana
+# promtail
 
 observe-run:
-	docker run -d \
+	@$(DOCKER) run -d \
 	    --name promtail \
 	    --restart unless-stopped \
 	    -v /var/log:/var/log:ro \
@@ -150,3 +187,20 @@ observe-run:
 	    -config.file=/etc/promtail/promtail-config.yaml \
 	    -log.level=info
 
+# help
+
+help:
+	@echo ""
+	@echo "Scripts in Makefile"
+	@echo "  make air              - run air (live reload)"
+	@echo "  make run              - go run main"
+	@echo "  make run-p PORT=8081  - run on custom port"
+	@echo "  make run-l            - run with file logging"
+	@echo "  make build            - build binary ($(BIN))"
+	@echo "  make build-win        - build Windows binary ($(BIN_WIN))"
+	@echo "  make test-all         - run tests (no cache)"
+	@echo "  make docker-b-dev     - build dev image"
+	@echo "  make docker-r-dev     - run dev container"
+	@echo "  make up               - docker compose up+down"
+	@echo "  make logger-clean     - clean logs"
+	@echo ""

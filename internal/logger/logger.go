@@ -55,3 +55,7 @@ func (l *Logger) Fatalf(forStr string, args ...any) {
 func (l *Logger) Warnf(forStr string, args ...any) {
 	l.log.Warnf(forStr, args...)
 }
+
+func (l *Logger) Errorf(forStr string, args ...any) {
+	l.log.Errorf(forStr, args...)
+}

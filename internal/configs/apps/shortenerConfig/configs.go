@@ -2,14 +2,16 @@ package shortenerConfig
 
 import (
 	"shortener/internal/configs/flags"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	Addr    string `env:"PORT" envDefault:"8080"`
-	Version string `env:"VERSION" envDefault:"1"`
+	Addr                 string        `env:"PORT" envDefault:"8080"`
+	Version              string        `env:"VERSION" envDefault:"1"`
+	GracefulShutdownTime time.Duration `env:"GRACEFUL_SHUTDOWN_TIME" envDefault:"5s"`
 }
 
 func New() *Config {

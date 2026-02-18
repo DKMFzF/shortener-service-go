@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
+	"errors"
 	"net/http"
-	"os"
 	"os/signal"
 	config "shortener/internal/configs/apps/shortenerConfig"
 	"shortener/internal/configs/flags"
@@ -19,8 +19,6 @@ import (
 
 type App struct {
 	Server     http.Server
-	Context    context.Context
-	Cancel     context.CancelCauseFunc
 	Controller *router.BaseController
 	Config     *config.Config
 	Logger     *logger.Logger
@@ -72,16 +70,29 @@ func (app *App) StartServer() {
 }
 
 func (app *App) GracefulShutdown() {
-	quit := make(chan os.Signal, 1)
+	sigCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
+	<-sigCtx.Done()
+	app.Logger.Infof("shutdown signal received: %v", context.Cause(sigCtx))
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	timeout := app.Config.GracefulShutdownTime
+	if timeout <= 0 {
+		timeout = 5 * time.Second
+	}
+
+	shutdownCause := errors.New("graceful shutdown timeout exceeded")
+	shutdownCtx, cancel := context.WithTimeoutCause(context.Background(), timeout, shutdownCause)
 	defer cancel()
 
-	if err := app.Server.Shutdown(ctx); err != nil {
-		app.Logger.Fatalf("panic %v", err)
-		panic(err)
+	if err := app.Server.Shutdown(shutdownCtx); err != nil {
+		if errors.Is(err, context.DeadlineExceeded) || errors.Is(context.Cause(shutdownCtx), shutdownCause) {
+			app.Logger.Errorf("shutdown timed out after %s: %v", timeout, err)
+			return
+		}
+		app.Logger.Errorf("shutdown failed: %v", err)
+		return
 	}
+
+	app.Logger.Infof("server shutdown completed")
 }
